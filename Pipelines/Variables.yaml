@@ -13,7 +13,7 @@ variables:
     value: $(Build.ArtifactStagingDirectory)
   - name: basedOnStratumKitName           # Only needed when running kit from Stratum
     value: jumpstart-windows-vm
-  - name: artifactFeedCredentials         # PAT based service connection to Azure Artifacts feed
-    value: 'ACC-Azure-00 Stratum Feed'
+ # - name: artifactFeedCredentials         # PAT based service connection to Azure Artifacts feed
+ #   value: 'ACC-Azure-00 Stratum Feed'
   - name: artifactFeed
     value: 'Stratum'
