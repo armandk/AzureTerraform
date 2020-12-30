@@ -1,0 +1,11 @@
+variables:
+  - name: serviceConnectionApp
+    value: ADO-ACC-17566-ARI-PROD-SP # <--- CHANGE TO DEVOPS SERVICE CONNECTION NAME
+
+# Terraform Backend Setup
+  - name: backendResourceGroupName
+    value: $(motsId)-eastus2-devops-rg
+  - name: backendStorageAccountName
+    value: $(motsId)devopsstdgatt002
+  - name: backendContainerName
+    value: ariprodtftstate

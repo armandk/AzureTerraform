@@ -1,0 +1,195 @@
+trigger:
+  branches:
+    include:
+      - master
+  paths:
+    exclude:
+      - /**/*.md
+      - /secret/*.*
+      - /.attachments
+
+variables:
+  - template: Variables.yaml
+
+pool: $(agent_pool)
+
+stages:
+  - template: ./Layers.yaml
+    parameters:
+      environment: prod
+
+      # When setting "skip:  true", ensure the first layer to run has "start: start"
+      layers:
+        - name: resourcegroup
+          type: resourcegroup
+          version: "0.6.0"
+          skip: true
+          destroy: false
+          dependencies:
+            start: start
+
+        - name: networking
+          type: networking
+          version: "0.4.0"
+          skip: true
+          destroy: false
+          dependencies:
+            resourcegroup: resourcegroup
+
+        - name: keyvault
+          type: keyvault
+          version: "1.2.0"
+          skip: true
+          destroy: false
+          dependencies:
+            resourcegroup: resourcegroup
+
+        - name: applicationinsights
+          type: applicationinsights
+          version: "0.3.0"
+          skip: true
+          destroy: false
+          dependencies:
+            resourcegroup: resourcegroup
+
+        - name: adoprivateendpoints
+          type: adoprivateendpoints
+          version: "0.3.0"
+          skip: true
+          destroy: false
+          dependencies:
+            keyvault: keyvault
+
+        - name: loganalytics
+          type: loganalytics
+          version: "0.4.0"
+          skip: true
+          destroy: false
+          dependencies:
+            keyvault: keyvault
+            adoprivateendpoints: adoprivateendpoints
+
+        - name: storage
+          type: storage
+          version: "0.6.5"
+          skip: true
+          destroy: false
+          dependencies:
+            keyvault: keyvault
+            adoprivateendpoints: adoprivateendpoints
+
+        - name: loadbalancer
+          type: loadbalancer
+          version: "0.4.0"
+          skip: true
+          destroy: false
+          dependencies:
+            networking: networking
+
+        - name: privatelinkservice
+          type: privatelinkservice
+          version: "0.4.0"
+          skip: true
+          destroy: false
+          dependencies:
+            networking: networking
+            loadbalancer: loadbalancer
+
+        - name: recoveryservicesvault
+          type: recoveryservicesvault
+          version: "0.6.0"
+          skip: true
+          destroy: false
+          dependencies:
+            resourcegroup: resourcegroup
+
+        - name: privateendpoints
+          type: privateendpoints
+          version: "0.4.0"
+          skip: true
+          destroy: false
+          dependencies:
+            networking: networking
+            keyvault: keyvault
+            storage: storage
+
+        - name: privatednszone
+          type: privatednszone
+          version: "0.4.0"
+          skip: true
+          destroy: false
+          dependencies:
+            networking: networking
+            privateendpoints: privateendpoints
+
+        - name: privatednsarecord
+          type: privatednsarecord
+          version: "0.4.0"
+          skip: true
+          destroy: false
+          dependencies:
+            privatednszone: privatednszone
+            privateendpoints: privateendpoints                   
+
+        - name: windowsvirtualmachine
+          type: windowsvirtualmachine
+          version: "0.8.0"
+          skip: true
+          destroy: false
+          dependencies:
+            loadbalancer: loadbalancer
+            storage: storage
+            keyvault: keyvault
+            adoprivateendpoints: adoprivateendpoints
+            recoveryservicesvault: recoveryservicesvault
+
+        - name: windowsvirtualmachineextension
+          type: windowsvirtualmachineextension
+          version: "0.2.0"
+          skip: true
+          destroy: false
+          dependencies:
+            storage: storage
+            loganalytics: loganalytics
+            windowsvirtualmachine: windowsvirtualmachine
+
+        - name: windowsvirtualmachinecustomextension
+          type: windowsvirtualmachinecustomextension
+          version: "0.1.0"
+          skip: true
+          destroy: false
+          dependencies:
+            windowsvirtualmachine: windowsvirtualmachine
+            windowsvirtualmachineextension: windowsvirtualmachineextension
+
+        - name: domainjoin
+          type: domainjoin
+          version: "0.3.17"
+          skip: false
+          destroy: false
+          dependencies:
+            windowsvirtualmachine: windowsvirtualmachine
+            windowsvirtualmachineextension: windowsvirtualmachineextension
+            windowsvirtualmachinecustomextension: windowsvirtualmachinecustomextension
+        
+        - name: virtualmachine
+          type: virtualmachine
+          version: "1.14.0"
+          skip: true
+          destroy: false
+          dependencies:
+            loadbalancer: loadbalancer
+            storage: storage
+            keyvault: keyvault
+            adoprivateendpoints: adoprivateendpoints
+            recoveryservicesvault: recoveryservicesvault
+        
+        - name: virtualmachineextension
+          type: virtualmachineextension
+          version: "0.6.25"
+          skip: true
+          destroy: false
+          dependencies:
+            storage: storage
+            loganalytics: loganalytics
+            virtualmachine: virtualmachine

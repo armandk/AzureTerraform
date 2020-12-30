@@ -1,0 +1,19 @@
+variables:
+  - name: motsId
+    value: "17566"                          # <--- CHANGE TO APPLICATION MOTSID
+  - name: agent_pool
+    value: 17566-agents
+  - name: projectName
+    value: '17566-ARI'                    # <--- CHANGE TO YOUR ADO PROJECT NAME
+  - name: pipelineId
+    value: 207
+  - name: preferTriggeringPipeline
+    value: true
+  - name: downloadPath
+    value: $(Build.ArtifactStagingDirectory)
+  - name: basedOnStratumKitName           # Only needed when running kit from Stratum
+    value: jumpstart-windows-vm
+  - name: artifactFeedCredentials         # PAT based service connection to Azure Artifacts feed
+    value: 'ACC-Azure-00 Stratum Feed'
+  - name: artifactFeed
+    value: 'Stratum'
