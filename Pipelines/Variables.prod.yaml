@@ -1,6 +1,6 @@
 variables:
   - name: serviceConnectionApp
-    value: ADO-ACC-17566-ARI-PROD-SP # <--- CHANGE TO DEVOPS SERVICE CONNECTION NAME
+    value: FromDevOps # <--- CHANGE TO DEVOPS SERVICE CONNECTION NAME
 
 # Terraform Backend Setup
   - name: backendResourceGroupName
